@@ -1,0 +1,12 @@
+camel:
+  springboot:
+    main-run-controller: true
+spring:
+  artemis:
+    user: artemis
+    password: artemis
+
+app:
+  queue:
+    consume: "jms:queue:CONSUMER_QUEUE"
+    produce: "jms:queue:RECEIVER_QUEUE"
