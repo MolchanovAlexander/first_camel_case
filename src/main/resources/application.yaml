@@ -3,8 +3,8 @@ camel:
     main-run-controller: true
 spring:
   artemis:
-    user: artemis
-    password: artemis
+    user: admin
+    password: admin
 
 app:
   queue:
