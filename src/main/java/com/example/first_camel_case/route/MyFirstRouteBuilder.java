@@ -11,6 +11,8 @@ public class MyFirstRouteBuilder extends RouteBuilder {
 
     @Value("${app.queue.consume}")
     private String CONSUMER;
+    @Value("${app.queue.produce}")
+    private String PRODUCER;
 
     @Autowired
     FirstProcessor firstProcessor;
@@ -25,6 +27,7 @@ public class MyFirstRouteBuilder extends RouteBuilder {
                 .log("<<Processing Message - Content: ${body}")
                 .process(firstProcessor)
                 .log("Content after processing: ${body}")
+                .to(PRODUCER)
                 .stop();
     }
 }

@@ -14,6 +14,6 @@ public class FirstProcessor implements Processor {
         log.info("Processor read the message body {}", body);
         body = body.replace("World", "Ukraine");
         exchange.getMessage().setBody(body);
-        log.info("File content has been processed and updated.");
+        log.info(" content has been processed and updated.");
     }
 }
