@@ -5,27 +5,8 @@
        http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <bean class="com.example.first_camel_case.processor.FirstProcessor" id="firstProcessor2"/>
-<!--    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">-->
-<!--        <property name="connectionFactory" ref="jmsConnectionFactory"/>-->
-<!--    </bean>-->
-<!--    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">-->
-<!--        <property name="brokerURL" value="tcp://localhost:61616"/>-->
-<!--        <property name="userName" value="${spring.activemq.user}"/>-->
-<!--        <property name="password" value="${spring.activemq.password}"/>-->
-<!--    </bean>-->
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-
-        <!--    <route id="simple-route">-->
-        <!--        <from id="route-timer" uri="timer://foo?period=1000"/>-->
-        <!--        <setBody id="route-setBody">-->
-        <!--            <simple>Hello World </simple>-->
-        <!--        </setBody>-->
-        <!--        <to uri="bean:myBean?method=secondMethod"/>-->
-        <!--        <log id="route-log" message=">>> ${body}"/>-->
-        <!--    </route>-->
-
-
         <route id="consume-route">
             <from uri="{{app.queue.consume}}"/>
             <log message="---Received msg: ${header.CamelFileName}"/>
@@ -38,6 +19,12 @@
             <process ref="firstProcessor2"/>
             <log message="Content after processing: ${body}"/>
             <to uri="{{app.queue.produce}}"/>
+        </route>
+
+        <route id="produce-route">
+            <from uri="{{app.queue.produce}}"/>
+            <log message="from Produce - Received msg: ${header.CamelFileName}"/>
+
         </route>
     </camelContext>
 
