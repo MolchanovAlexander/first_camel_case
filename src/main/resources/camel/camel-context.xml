@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <bean class="com.example.first_camel_case.processor.FirstProcessor" id="firstProcessor2"/>
+<!--    <bean id="jms" class="org.apache.camel.component.jms.JmsComponent">-->
+<!--        <property name="connectionFactory" ref="jmsConnectionFactory"/>-->
+<!--    </bean>-->
+<!--    <bean id="jmsConnectionFactory" class="org.apache.activemq.ActiveMQConnectionFactory">-->
+<!--        <property name="brokerURL" value="tcp://localhost:61616"/>-->
+<!--        <property name="userName" value="${spring.activemq.user}"/>-->
+<!--        <property name="password" value="${spring.activemq.password}"/>-->
+<!--    </bean>-->
+
+    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+
+        <!--    <route id="simple-route">-->
+        <!--        <from id="route-timer" uri="timer://foo?period=1000"/>-->
+        <!--        <setBody id="route-setBody">-->
+        <!--            <simple>Hello World </simple>-->
+        <!--        </setBody>-->
+        <!--        <to uri="bean:myBean?method=secondMethod"/>-->
+        <!--        <log id="route-log" message=">>> ${body}"/>-->
+        <!--    </route>-->
+
+
+        <route id="consume-route">
+            <from uri="{{app.queue.consume}}"/>
+            <log message="---Received msg: ${header.CamelFileName}"/>
+            <to uri="direct:processFile"/>
+        </route>
+
+        <route id="process-route">
+            <from uri="direct:processFile"/>
+            <log message="&lt;&lt;Processing Message - Content: ${body}"/>
+            <process ref="firstProcessor2"/>
+            <log message="Content after processing: ${body}"/>
+            <to uri="{{app.queue.produce}}"/>
+        </route>
+    </camelContext>
+
+</beans>
