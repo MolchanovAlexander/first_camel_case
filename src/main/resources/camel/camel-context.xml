@@ -5,26 +5,80 @@
        http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <bean class="com.example.first_camel_case.processor.FirstProcessor" id="firstProcessor2"/>
+    <bean class="com.example.first_camel_case.processor.SomeHandler" id="someHandler"/>
+    <bean class="com.example.first_camel_case.processor.AnalizeBean" id="analizeBean"/>
 
-    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
-        <route id="consume-route">
-            <from uri="{{app.queue.consume}}"/>
-            <log message="---Received msg: ${header.CamelFileName}"/>
-            <to uri="direct:processFile"/>
+    <camelContext id="primaryCamelContext" xmlns="http://camel.apache.org/schema/spring" trace="false">
+        <errorHandler id="parseErr" type="DeadLetterChannel" deadLetterUri="activemq:queue:DNO.ERROR"/>
+        <errorHandler id="timingErr" deadLetterUri="activemq:queue:DNO.ERROR" type="DeadLetterChannel">
+            <redeliveryPolicy backOffMultiplier="2" maximumRedeliveries="2" redeliveryDelay="1000" retryAttemptedLogLevel="WARN" useExponentialBackOff="true"/>
+        </errorHandler>
+
+        <route id="dno">
+            <from uri="jms:queue:DNO_1"/>
+            <log message="test: ${header.JmsTimestamp}"/>
+            <choice>
+                <when>
+                    <method ref="analizeBean" method="isDigit"/>
+                    <to uri="{{app.queue.consume}}"/>
+                </when>
+                <otherwise>
+                    <process ref="firstProcessor2"/>
+                    <to uri="{{app.queue.produce}}"/>
+                </otherwise>
+            </choice>
+
+
         </route>
 
-        <route id="process-route">
-            <from uri="direct:processFile"/>
+        <route id="process-route" errorHandlerRef="timingErr">
+            <from uri="{{app.queue.consume}}"/>
             <log message="&lt;&lt;Processing Message - Content: ${body}"/>
-            <process ref="firstProcessor2"/>
-            <log message="Content after processing: ${body}"/>
+            <bean ref="someHandler"/>
+            <!--            <process ref="firstProcessor2"/>-->
+            <log message="Header after processing: ${header.BODY}"/>
+            <log message="Body after processing: ${body}"/>
             <to uri="{{app.queue.produce}}"/>
         </route>
 
         <route id="produce-route">
             <from uri="{{app.queue.produce}}"/>
-            <log message="from Produce - Received msg: ${header.CamelFileName}"/>
+            <choice>
+                <when>
+                    <simple>${header.WAIT} == 'Y'</simple>
+                    <multicast>
+                        <to uri="activemq:queue:DNO.CR"/>
+                        <to uri="activemq:queue:DNO.ER"/>
+                    </multicast>
+                </when>
+                <otherwise>
+                    <setHeader name="Destination">
+                        <constant>activemq:queue:DNO.THREE</constant>
+                    </setHeader>
+                    <log message="log -- header dest: ${header.Destination}"/>
+                    <recipientList>
+                        <simple>${header.Destination}</simple>
+                    </recipientList>
+                </otherwise>
+            </choice>
 
+        </route>
+
+        <route id="receiver">
+            <from uri="activemq:queue:DNO.CR"/>
+            <log message="receiver1: ${body}"/>
+<!--            <to uri="{{app.queue.consume}}"/>-->
+        </route>
+
+        <route id="receiver2">
+            <from uri="activemq:queue:DNO.ER"/>
+            <log message="receiver2: ${body}"/>
+<!--            <to uri="{{app.queue.consume}}"/>-->
+        </route>
+        <route id="receiver3">
+            <from uri="activemq:queue:DNO.THREE"/>
+            <log message="receiver2: ${body}"/>
+            <!--            <to uri="{{app.queue.consume}}"/>-->
         </route>
     </camelContext>
 

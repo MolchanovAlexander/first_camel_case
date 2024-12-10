@@ -1,9 +1,12 @@
 camel:
   springboot:
     main-run-controller: true
-    routes-include-pattern: classpath:camel/*.xml
+    #routes-include-pattern: classpath:camel/*.xml
+
 
 spring:
+  main:
+    allow-bean-definition-overriding: true
   activemq:
     user: admin
     password: admin
