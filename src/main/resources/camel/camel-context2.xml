@@ -9,13 +9,18 @@
         <route id="receiver">
             <from uri="activemq:queue:DNO.CR"/>
             <log message="receiver1: ${body}"/>
-            <to uri="{{app.queue.consume}}"/>
+            <!--            <to uri="{{app.queue.consume}}"/>-->
         </route>
 
         <route id="receiver2">
             <from uri="activemq:queue:DNO.ER"/>
             <log message="receiver2: ${body}"/>
-            <to uri="{{app.queue.consume}}"/>
+            <!--            <to uri="{{app.queue.consume}}"/>-->
+        </route>
+        <route id="receiver3">
+            <from uri="activemq:queue:DNO.THREE"/>
+            <log message="receiver3: ${body}"/>
+            <!--            <to uri="{{app.queue.consume}}"/>-->
         </route>
 
     </routeContext>

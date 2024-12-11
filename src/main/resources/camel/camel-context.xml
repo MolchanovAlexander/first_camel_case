@@ -4,15 +4,17 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <bean class="com.example.first_camel_case.processor.FirstProcessor" id="firstProcessor2"/>
-    <bean class="com.example.first_camel_case.processor.SomeHandler" id="someHandler"/>
-    <bean class="com.example.first_camel_case.processor.AnalizeBean" id="analizeBean"/>
+
+    <import resource="camel-context2.xml"/>
 
     <camelContext id="primaryCamelContext" xmlns="http://camel.apache.org/schema/spring" trace="false">
+
         <errorHandler id="parseErr" type="DeadLetterChannel" deadLetterUri="activemq:queue:DNO.ERROR"/>
         <errorHandler id="timingErr" deadLetterUri="activemq:queue:DNO.ERROR" type="DeadLetterChannel">
             <redeliveryPolicy backOffMultiplier="2" maximumRedeliveries="2" redeliveryDelay="1000" retryAttemptedLogLevel="WARN" useExponentialBackOff="true"/>
         </errorHandler>
+
+        <routeContextRef ref="DNO_CONTEXT"/>
 
         <route id="dno">
             <from uri="jms:queue:DNO_1"/>
@@ -64,22 +66,26 @@
 
         </route>
 
-        <route id="receiver">
-            <from uri="activemq:queue:DNO.CR"/>
-            <log message="receiver1: ${body}"/>
-<!--            <to uri="{{app.queue.consume}}"/>-->
-        </route>
+<!--        <route id="receiver">-->
+<!--            <from uri="activemq:queue:DNO.CR"/>-->
+<!--            <log message="receiver1: ${body}"/>-->
+<!--&lt;!&ndash;            <to uri="{{app.queue.consume}}"/>&ndash;&gt;-->
+<!--        </route>-->
 
-        <route id="receiver2">
-            <from uri="activemq:queue:DNO.ER"/>
-            <log message="receiver2: ${body}"/>
-<!--            <to uri="{{app.queue.consume}}"/>-->
-        </route>
-        <route id="receiver3">
-            <from uri="activemq:queue:DNO.THREE"/>
-            <log message="receiver2: ${body}"/>
-            <!--            <to uri="{{app.queue.consume}}"/>-->
-        </route>
+<!--        <route id="receiver2">-->
+<!--            <from uri="activemq:queue:DNO.ER"/>-->
+<!--            <log message="receiver2: ${body}"/>-->
+<!--&lt;!&ndash;            <to uri="{{app.queue.consume}}"/>&ndash;&gt;-->
+<!--        </route>-->
+<!--        <route id="receiver3">-->
+<!--            <from uri="activemq:queue:DNO.THREE"/>-->
+<!--            <log message="receiver2: ${body}"/>-->
+<!--            &lt;!&ndash;            <to uri="{{app.queue.consume}}"/>&ndash;&gt;-->
+<!--        </route>-->
     </camelContext>
+
+    <bean class="com.example.first_camel_case.processor.FirstProcessor" id="firstProcessor2"/>
+    <bean class="com.example.first_camel_case.processor.SomeHandler" id="someHandler"/>
+    <bean class="com.example.first_camel_case.processor.AnalizeBean" id="analizeBean"/>
 
 </beans>
