@@ -5,8 +5,8 @@
        https://www.springframework.org/schema/beans/spring-beans-3.0.xsd
        http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
 
-    <routeContext id="DNO_CONTEXT" xmlns="http://camel.apache.org/schema/spring" >
-        <route id="receiver">
+    <routeContext id="DNO_CONTEXT" xmlns="http://camel.apache.org/schema/spring">
+        <route id="receiver1">
             <from uri="activemq:queue:DNO.CR"/>
             <log message="receiver1: ${body}"/>
             <!--            <to uri="{{app.queue.consume}}"/>-->
@@ -20,7 +20,7 @@
         <route id="receiver3">
             <from uri="activemq:queue:DNO.THREE"/>
             <log message="receiver3: ${body}"/>
-            <!--            <to uri="{{app.queue.consume}}"/>-->
+            <to uri="activemq:queue:APP2.IN"/>
         </route>
 
     </routeContext>
