@@ -7,28 +7,34 @@
 
     <camelContext id="primaryCamelContext" xmlns="http://camel.apache.org/schema/spring" trace="false">
 
-        <route id="dno">
-            <from uri="brokerComponentA:queue:IN"/>
+        <route id="forward">
+            <from uri="brokerComponentA:queue:IN?maxConcurrentConsumers=10"/>
             <log message="isDigit result: ${bean:analizeBean.isDigit(${body})}"/>
-            <to uri="brokerComponentB:queue:ANALIZE.NUM"/>
             <choice>
                 <when>
                     <method ref="analizeBean" method="isDigit"/>
-                    <log message="1_________1: ${body}"/>
                     <to uri="brokerComponentB:queue:ANALIZE.NUM"/>
                 </when>
                 <otherwise>
-                    <log message="2__________2: ${body}"/>
                     <to uri="brokerComponentB:queue:ANALIZE.CHAR"/>
                 </otherwise>
             </choice>
-
-
         </route>
-        <route id="testRoute">
+
+        <route id="backward">
             <from uri="brokerComponentB:queue:IN"/>
-            <log message="Received message body: ${body}"/>
-            <to uri="brokerComponentA:queue:ANALIZE.NUM"/>
+            <log message="component B sending to component A: ${body}"/>
+            <to uri="brokerComponentA:queue:IN"/>
+        </route>
+
+        <route id="read1">
+            <from uri="brokerComponentB:queue:ANALIZE.NUM"/>
+            <log message="this is number------ : ${body}"/>
+        </route>
+
+        <route id="read2">
+            <from uri="brokerComponentB:queue:ANALIZE.CHAR"/>
+            <log message="this is not a number------ : ${body}"/>
         </route>
 
     </camelContext>

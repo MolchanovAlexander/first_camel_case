@@ -1,29 +1,29 @@
 services:
+
   activemq1:
     image: rmohr/activemq
     container_name: activemq1
     ports:
       - "61616:61616"
       - "8161:8161"
-    networks:
-      - app-network
 
   activemq2:
     image: rmohr/activemq
-#    image: rabbitmq:3.8-management
-#    image: apache/activemq-artemis
     container_name: activemq2
     ports:
-#      - "5672:5672"
-#      - "8089:15672"
       - "61617:61616"
       - "8162:8161"
-    environment:
-      RABBITMQ_DEFAULT_USER: guest
-      RABBITMQ_DEFAULT_PASS: guest
-    networks:
-      - app-network
 
-networks:
-  app-network:
-    driver: bridge
+#  activemq2:
+#    image: rmohr/activemq
+#    image: rabbitmq:3.8-management
+#    image: apache/activemq-artemis
+#    container_name: activemq2
+#    ports:
+#      - "5672:5672"
+#      - "8089:15672"
+#      - "61617:61616"
+#      - "8162:8161"
+#    environment:
+#      RABBITMQ_DEFAULT_USER: guest
+#      RABBITMQ_DEFAULT_PASS: guest
