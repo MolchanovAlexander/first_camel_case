@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<mqdoc>
+    <string name="PRODUCT_CARD">JUNI</string>
+    <string name="BANK_NAME">PB</string>
+    <xml name="OLD_CARD_DATA">
+        <ContractData prod="GUF" clid="345765"/>
+    </xml>
+</mqdoc>

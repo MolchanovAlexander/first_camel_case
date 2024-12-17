@@ -12,7 +12,11 @@
             <log message="isDigit result: ${bean:analizeBean.isDigit(${body})}"/>
             <choice>
                 <when>
-                    <method ref="analizeBean" method="isDigit"/>
+                    <method ref="xpathExecutor" method="isMatchCustom(${body}, 'isJUNI', 'BOOLEAN')"/>
+                    <to uri="brokerComponentB:queue:ANALIZE.NUM"/>
+                </when>
+                <when>
+                    <method ref="xpathExecutor" method="isMatchCustom(${body}, 'isContractJUNI', 'BOOLEAN')"/>
                     <to uri="brokerComponentB:queue:ANALIZE.NUM"/>
                 </when>
                 <otherwise>
@@ -46,6 +50,9 @@
             <map>
                 <entry key="isJUNI" value="mqdoc/string[@name='PRODUCT_CARD' and text()='JUNI']"/>
                 <entry key="isContractJUNI" value="mqdoc/xml[@name='OLD_CARD_DATA']/ContractData[@prod='JUNI']"/>
+                <entry key="isJUNIOrContractJUNI" value="mqdoc[string[@name='PRODUCT_CARD' and text()='JUNI']
+                                                            or xml[@name='OLD_CARD_DATA']/ContractData[@prod='JUNI']]"/>
+
             </map>
         </constructor-arg>
     </bean>

@@ -14,7 +14,7 @@ import org.xml.sax.InputSource;
 
 public class XPathExecutor {
     private static final String DEF_CONDITION = "DEFAULT_CONDITION";
-    private Map<String , String > xpathConditions = new HashMap<>();
+    private Map<String, String> xpathConditions = new HashMap<>();
 
     public XPathExecutor(String xpathExp) {
         this.xpathConditions.put(DEF_CONDITION, xpathExp);
@@ -24,18 +24,17 @@ public class XPathExecutor {
         this.xpathConditions = xpathConditions;
     }
 
-    public boolean isMatchCustom (String xml, String type) {
+    public boolean isMatchCustom(String xml, String type) {
         String condition = this.xpathConditions.get(DEF_CONDITION);
         return match(condition, xml, getPathReturnType(type));
     }
 
-    public boolean isMatchCustom (String xml, String nameCondition, String type) {
+    public boolean isMatchCustom(String xml, String nameCondition, String type) {
         if (!this.xpathConditions.containsKey(nameCondition)) {
             throw new RuntimeException("This  XPath condition is not founded!");
         } else {
             return match(this.xpathConditions.get(nameCondition), xml, getPathReturnType(type));
         }
-
     }
 
     private static QName getPathReturnType(String type) {
@@ -59,12 +58,11 @@ public class XPathExecutor {
         XPath xPath = XPathFactory.newInstance().newXPath();
         InputSource inputSource = new InputSource(new ByteArrayInputStream(sourceXml.getBytes(StandardCharsets.UTF_8)));
         Object resultPath = xPath.evaluate(xpathExp, inputSource, qName);
-        Boolean res =null;
+        Boolean res = null;
         if (qName.equals(XPathConstants.NODESET)) {
             NodeList nodeList = (NodeList) resultPath;
             res = nodeList != null && nodeList.getLength() > 0;
-        } else  if (qName.equals(XPathConstants.BOOLEAN)) {
-            NodeList nodeList = (NodeList) resultPath;
+        } else if (qName.equals(XPathConstants.BOOLEAN)) {
             res = (Boolean) resultPath;
         } else if (qName.equals(XPathConstants.NUMBER)) {
             Double number = (Double) resultPath;
