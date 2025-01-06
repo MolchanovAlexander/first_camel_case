@@ -12,17 +12,22 @@
             <log message="isDigit result: ${bean:analizeBean.isDigit(${body})}"/>
             <choice>
                 <when>
-                    <method ref="xpathExecutor" method="isMatchCustom(${body}, 'isJUNI', 'BOOLEAN')"/>
-                    <to uri="brokerComponentB:queue:ANALIZE.NUM"/>
-                </when>
-                <when>
-                    <method ref="xpathExecutor" method="isMatchCustom(${body}, 'isContractJUNI', 'BOOLEAN')"/>
+                    <method ref="xpathExecutor" method="isMatchCustom(${body}, 'isJUNIOrContractJUNI', 'BOOLEAN')"/>
                     <to uri="brokerComponentB:queue:ANALIZE.NUM"/>
                 </when>
                 <otherwise>
                     <to uri="brokerComponentB:queue:ANALIZE.CHAR"/>
                 </otherwise>
             </choice>
+        </route>
+
+        <route id="callback1">
+            <from uri="brokerComponentA:queue:CALLBACK.1?maxConcurrentConsumers=10"/>
+            <log message="callback_1: ${body}"/>
+        </route>
+        <route id="callback2">
+            <from uri="brokerComponentA:queue:CALLBACK.2?maxConcurrentConsumers=10"/>
+            <log message="callback_2: ${body}"/>
         </route>
 
         <route id="backward">
@@ -39,6 +44,12 @@
         <route id="read2">
             <from uri="brokerComponentB:queue:ANALIZE.CHAR"/>
             <log message="this is not a number------ : ${body}"/>
+            <setHeader name="Q_CALLBACK">
+                <simple>brokerComponentA:queue:CALLBACK.1,brokerComponentA:queue:CALLBACK.2</simple>
+            </setHeader>
+            <recipientList>
+                <header>Q_CALLBACK</header>
+            </recipientList>
         </route>
 
     </camelContext>

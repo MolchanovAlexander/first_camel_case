@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+
+
+        <route xmlns="http://camel.apache.org/schema/spring" customId="true" id="1_route_timerSWBatch">
+            <from uri="direct:queue:DNO_1"/>
+            <log message="test: ${header.foo}"/>
+            <choice>
+                <when>
+                    <method ref="analizeBean" method="isDigit"/>
+                    <to uri="mock://queue:DIGIT"/>
+                </when>
+                <otherwise>
+                    <process ref="firstProcessor2"/>
+                    <to uri="mock://queue:CHAR"/>
+                </otherwise>
+            </choice>
+        </route>
+
+<!--        <route id="process-route" errorHandlerRef="timingErr">-->
+<!--            <from uri="{{app.queue.consume}}"/>-->
+<!--            <log message="&lt;&lt;Processing Message - Content: ${body}"/>-->
+<!--            <bean ref="someHandler"/>-->
+<!--            &lt;!&ndash;            <process ref="firstProcessor2"/>&ndash;&gt;-->
+<!--            <log message="Header after processing: ${header.BODY}"/>-->
+<!--            <log message="Body after processing: ${body}"/>-->
+<!--            <to uri="{{app.queue.produce}}"/>-->
+<!--        </route>-->
+
+
+        <!--        <route id="receiver2">-->
+        <!--            <from uri="activemq:queue:DNO.ER"/>-->
+        <!--            <log message="receiver2: ${body}"/>-->
+        <!--&lt;!&ndash;            <to uri="{{app.queue.consume}}"/>&ndash;&gt;-->
+        <!--        </route>-->
+        <!--        <route id="receiver3">-->
+        <!--            <from uri="activemq:queue:DNO.THREE"/>-->
+        <!--            <log message="receiver2: ${body}"/>-->
+        <!--            &lt;!&ndash;            <to uri="{{app.queue.consume}}"/>&ndash;&gt;-->
+        <!--        </route>-->
+
+
+    <bean class="com.example.first_camel_case.processor.FirstProcessor" id="firstProcessor2"/>
+
+    <bean class="com.example.first_camel_case.processor.SomeHandler" id="someHandler"/>
+
+    <bean class="com.example.first_camel_case.processor.AnalizeBean" id="analizeBean"/>
+
+</beans>

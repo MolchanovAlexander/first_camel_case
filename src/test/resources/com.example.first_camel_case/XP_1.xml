@@ -2,6 +2,8 @@
 <mqdoc>
     <string name="PRODUCT_CARD">JUNI</string>
     <string name="BANK_NAME">PB</string>
+    <string name="CUST_ID">2</string>
+    <string name="CUST_NAME">Vasya</string>
     <xml name="OLD_CARD_DATA">
         <ContractData prod="GUF" clid="345765"/>
     </xml>

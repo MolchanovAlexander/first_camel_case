@@ -48,7 +48,8 @@ public class XPathExecutorTest {
         String xml = new String(bytes, StandardCharsets.UTF_8);
         Map<String, String> conditions = new HashMap<>();
         conditions.put("isJUNI", "mqdoc/string[@name='PRODUCT_CARD' and text()='JUNI']");
-        conditions.put("isJUNICombinedOr", "mqdoc[string[@name='PRODUCT_CARD' and text()='JUNI'] or xml[@name='OLD_CARD_DATA']/ContractData[@prod='JUNI']]");
+        conditions.put("isJUNICombinedOr", "mqdoc[string[@name='PRODUCT_CARD' and text()='JUNI'] " +
+                                                "or xml[@name='OLD_CARD_DATA']/ContractData[@prod='JUNI']]");
         XPathExecutor instance = new XPathExecutor(conditions);
         boolean result1 = instance.isMatchCustom(xml, "isJUNICombinedOr", "BOOLEAN");
         assertTrue(result1);
