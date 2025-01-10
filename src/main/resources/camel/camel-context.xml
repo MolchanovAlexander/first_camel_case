@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
+
+
+    <import resource="camel-context2.xml"/>
+
+    <camelContext id="primaryCamelContext" xmlns="http://camel.apache.org/schema/spring" trace="false">
+
+        <errorHandler id="parseErr" type="DeadLetterChannel" deadLetterUri="activemq:queue:DNO.ERROR"/>
+        <errorHandler id="timingErr" deadLetterUri="activemq:queue:DNO.ERROR" type="DeadLetterChannel">
+            <redeliveryPolicy backOffMultiplier="2" maximumRedeliveries="2" redeliveryDelay="1000"
+                              retryAttemptedLogLevel="WARN" useExponentialBackOff="true"/>
+        </errorHandler>
+
+        <routeContextRef ref="DNO_CONTEXT"/>
+
+        <route id="dno">
+            <from uri="activemq:queue:DNO_1"/>
+            <log message="test: ${header.JmsTimestamp}"/>
+            <log message="test1: ${body}"/>
+            <choice>
+                <when>
+                    <method ref="analizeBean" method="isDigit"/>
+                    <log message="test_cons: ${body}"/>
+                    <to uri="activemq:queue:CONSUMER_QUEUE"/>
+                </when>
+                <otherwise>
+                    <process ref="firstProcessor2"/>
+                    <log message="test_rec: ${body}"/>
+                    <to uri="activemq:queue:RECEIVER_QUEUE"/>
+                </otherwise>
+            </choice>
+        </route>
+
+        <route id="process-route" errorHandlerRef="timingErr">
+            <from uri="activemq:queue:CONSUMER_QUEUE"/>
+            <log message="&lt;&lt;Processing Message - Content: ${body}"/>
+            <bean ref="someHandler"/>
+            <log message="Header after processing: ${header.WAIT}"/>
+            <log message="Body after processing: ${body}"/>
+            <to uri="activemq:queue:RECEIVER_QUEUE"/>
+        </route>
+
+        <route id="produce-route">
+            <from uri="activemq:queue:RECEIVER_QUEUE"/>
+            <log message="test_______0: ${body}"/>
+            <choice>
+                <when>
+                    <simple>${header.WAIT} == 'Y'</simple>
+                    <log message="test__yes_0: ${body}"/>
+                    <multicast>
+                        <to uri="activemq:queue:DNO.CR"/>
+                        <to uri="activemq:queue:DNO.ER"/>
+                    </multicast>
+                </when>
+                <otherwise>
+                    <setHeader name="Destination">
+                        <constant>activemq:queue:DNO.THREE</constant>
+                    </setHeader>
+                    <log message="log -- header dest: ${header.Destination}"/>
+                    <recipientList>
+                        <simple>${header.Destination}</simple>
+                    </recipientList>
+                </otherwise>
+            </choice>
+
+        </route>
+
+        <route id="receiver">
+            <from uri="activemq:queue:DNO.FR"/>
+            <log message="receiver4 from app2 *** : ${body}"/>
+        </route>
+
+    </camelContext>
+
+
+    <bean class="com.example.first_camel_case.processor.FirstProcessor" id="firstProcessor2"/>
+
+    <bean class="com.example.first_camel_case.processor.SomeHandler" id="someHandler"/>
+
+    <bean class="com.example.first_camel_case.processor.AnalizeBean" id="analizeBean"/>
+
+</beans>

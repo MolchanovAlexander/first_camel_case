@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       https://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <routeContext id="DNO_CONTEXT" xmlns="http://camel.apache.org/schema/spring">
+        <route id="receiver1">
+            <from uri="activemq:queue:DNO.CR"/>
+            <log message="receiver1: ${body}"/>
+            <!--            <to uri="{{app.queue.consume}}"/>-->
+        </route>
+
+        <route id="receiver2">
+            <from uri="activemq:queue:DNO.ER"/>
+            <log message="receiver2: ${body}"/>
+            <!--            <to uri="{{app.queue.consume}}"/>-->
+        </route>
+        <route id="receiver3">
+            <from uri="activemq:queue:DNO.THREE"/>
+            <log message="receiver3: ${body}"/>
+            <to uri="activemq:queue:APP2.IN"/>
+        </route>
+
+    </routeContext>
+
+</beans>

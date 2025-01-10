@@ -10,12 +10,9 @@
         <route id="1_route_timerSWBatch">
             <from uri="direct:queue:DNO_1"/>
             <log message="test: ${header.foo}"/>
-            <bean ref="someHandler"/>
-            <filter>
-                <simple>${header.WAIT} == 'Y'</simple>
-                <log message="test: ${header.WAIT}"/>
-                <to uri="mock://queue:WAIT"/>
-            </filter>
+                <filter>
+                    <simple>{header.foo} == bar</simple>
+                </filter>
             <choice>
                 <when>
                     <method ref="analizeBean" method="isDigit"/>
@@ -27,6 +24,8 @@
                 </otherwise>
             </choice>
         </route>
+    </camelContext>
+
 
 <!--        <route id="process-route" errorHandlerRef="timingErr">-->
 <!--            <from uri="{{app.queue.consume}}"/>-->
@@ -37,7 +36,6 @@
 <!--            <log message="Body after processing: ${body}"/>-->
 <!--            <to uri="{{app.queue.produce}}"/>-->
 <!--        </route>-->
-    </camelContext>
 
 
         <!--        <route id="receiver2">-->
