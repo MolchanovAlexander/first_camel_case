@@ -10,11 +10,19 @@ import org.apache.camel.test.spring.junit5.CamelSpringBootTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 
+
+/*
+ *@author Ya
+ * mvn clean test -Dtest=MulticastRouteTest
+ */
+
 @CamelSpringBootTest
+@SpringBootTest
 @Import(ActiveMQConfig.class)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @ContextConfiguration(locations = "classpath:camel/camel-context.xml")
@@ -73,7 +81,7 @@ public class MulticastRouteTest {
         erEndpoint.expectedMessageCount(0); // Shouldn't receive messages
         threeEndpoint.expectedMessageCount(1);
         // Send a message with WAIT header != 'Y'
-        producerTemplate.sendBodyAndHeader("activemq:queue:DNO_1", "123", "WAIT", "N");
+        producerTemplate.sendBodyAndHeader("activemq:queue:DNO_1", "4565", "WAIT", "N");
 
         MockEndpoint.assertIsSatisfied(camelContext);
     }

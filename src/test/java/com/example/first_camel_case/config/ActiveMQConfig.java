@@ -6,6 +6,7 @@ import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Lazy;
 
 @Configuration
 public class ActiveMQConfig {
@@ -23,6 +24,7 @@ public class ActiveMQConfig {
         brokerService.setPersistent(false);
         brokerService.setUseJmx(false);
         brokerService.setDataDirectory("target/activemq-data");
+        brokerService.setSchedulerSupport(true);
         
         TransportConnector connector = new TransportConnector();
         connector.setUri(new URI("vm://localhost"));

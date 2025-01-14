@@ -19,8 +19,15 @@
 
         <route id="dno">
             <from uri="activemq:queue:DNO_1"/>
-            <log message="test: ${header.JmsTimestamp}"/>
             <log message="test1: ${body}"/>
+            <log message="test_delay_s: ${date:now} | ${header.JmsTimestamp}"/>
+            <setHeader name="AMQ_SCHEDULED_DELAY">
+                <constant>2000</constant> <!-- Delay in milliseconds -->
+            </setHeader>
+<!--            <delay>-->
+<!--                <constant>2000</constant>-->
+<!--            </delay>-->
+            <log message="test_delay_f: ${date:now} | ${header.JmsTimestamp}"/>
             <choice>
                 <when>
                     <method ref="analizeBean" method="isDigit"/>
