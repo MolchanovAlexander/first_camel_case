@@ -12,6 +12,8 @@
         <route id="tst">
             <from uri="brokerComponentA:queue:TEST.TEST.IN"/>
             <log message="isDigit result: ${bean:analizeBean.isDigit(${body})}"/>
+            <log message="body____: ${exchange}" loggingLevel="INFO"/>
+
             <choice>
                 <when>
                     <method ref="analizeBean" method="isDigit"/>

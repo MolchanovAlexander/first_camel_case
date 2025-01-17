@@ -49,7 +49,7 @@ public class TwoBrokersTest {
 
     @BeforeEach
     public void setup() throws InterruptedException {
-        Thread.sleep(1000);
+        //Thread.sleep(1000);// only for real brokers not inner
         numEndpoint.reset();
         charEndpoint.reset();
     }
@@ -67,9 +67,9 @@ public class TwoBrokersTest {
         numEndpoint.expectedMessageCount(1);
         numEndpoint.expectedBodiesReceived(List.of("4567"));
         charEndpoint.expectedMessageCount(0);
-        charEndpoint.await(4, TimeUnit.SECONDS);
-
-        Exchange exchange = producerTemplate.getCamelContext().getEndpoint("activemq:queue:TEST.QUEUE").createExchange();
+        //charEndpoint.await(4, TimeUnit.SECONDS); // only for real brokers not inner
+        //getEndpoint("brokerComponentA:queue:TEST.TEST.IN") - name doesn't matter
+        Exchange exchange = producerTemplate.getCamelContext().getEndpoint("brokerComponentA:queue:TEST.TEST.IN").createExchange();
         exchange.getIn().setBody("4567");
         exchange.getIn().setHeaders(headers);
         producerTemplate.send("brokerComponentA:queue:TEST.TEST.IN", exchange);
