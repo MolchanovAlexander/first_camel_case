@@ -12,7 +12,7 @@
         <route id="tst">
             <from uri="brokerComponentA:queue:TEST.TEST.IN"/>
             <log message="isDigit result: ${bean:analizeBean.isDigit(${body})}"/>
-            <log message="body____: ${exchange}" loggingLevel="INFO"/>
+            <log message="body____: ${date:now}" loggingLevel="INFO"/>
 
             <choice>
                 <when>
