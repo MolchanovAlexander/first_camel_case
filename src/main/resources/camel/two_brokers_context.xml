@@ -1,11 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans-3.0.xsd
-       http://camel.apache.org/schema/spring https://camel.apache.org/schema/spring/camel-spring.xsd">
+       xsi:schemaLocation=
+               "http://www.springframework.org/schema/beans
+        https://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+       http://camel.apache.org/schema/spring
+        https://camel.apache.org/schema/spring/camel-spring.xsd">
 
 
     <camelContext id="primaryCamelContext" xmlns="http://camel.apache.org/schema/spring" trace="false">
+        <route id="tst">
+            <from uri="brokerComponentA:queue:TEST.TEST.IN"/>
+            <log message="isDigit result: ${bean:analizeBean.isDigit(${body})}"/>
+            <choice>
+                <when>
+                    <method ref="analizeBean" method="isDigit"/>
+                    <to uri="brokerComponentA:queue:ANALIZE.NUM"/>
+                </when>
+                <otherwise>
+                    <to uri="brokerComponentA:queue:ANALIZE.CHAR"/>
+                </otherwise>
+            </choice>
+        </route>
 
         <route id="forward">
             <from uri="brokerComponentA:queue:IN?maxConcurrentConsumers=10"/>
@@ -52,11 +68,19 @@
             </recipientList>
         </route>
 
+        <route id="com_A_D">
+            <from uri="brokerComponentA:queue:ANALIZE.NUM"/>
+            <log message="A___TEST__D: ${body}"/>
+        </route>
+        <route id="com_A_C">
+            <from uri="brokerComponentA:queue:ANALIZE.CHAR"/>
+            <log message="A___TEST__C: ${body}"/>
+        </route>
     </camelContext>
 
-    <bean class="com.example.first_camel_case.processor.AnalizeBean" id="analizeBean"/>
+    <bean id="analizeBean" class="com.example.first_camel_case.processor.AnalizeBean"/>
 
-    <bean class="com.example.first_camel_case.processor.XPathExecutor" id="xpathExecutor">
+    <bean id="xpathExecutor" class="com.example.first_camel_case.processor.XPathExecutor">
         <constructor-arg>
             <map>
                 <entry key="isJUNI" value="mqdoc/string[@name='PRODUCT_CARD' and text()='JUNI']"/>
