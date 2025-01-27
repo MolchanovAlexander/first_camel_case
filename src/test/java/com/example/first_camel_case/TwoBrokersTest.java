@@ -1,5 +1,6 @@
 package com.example.first_camel_case;
 
+import static org.apache.camel.test.junit5.TestSupport.getMockEndpoint;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,5 +91,38 @@ public class TwoBrokersTest {
         producerTemplate.sendBodyAndHeader("brokerComponentA:queue:TEST.TEST.IN", "kjh", "WAIT", "Y");
 
         MockEndpoint.assertIsSatisfied(camelContext);
+    }
+
+    @Test
+    public void testTwoBrokerTraverse() throws Exception {
+        Map<String ,Object> headers = new HashMap<>();
+        headers.put("JMSCorrelationID", "None");
+        headers.put("MONITOR_OUT", "Y");
+
+        String routeId = "callback1";
+        String sendFrom = "brokerComponentA:queue:TEST.TEST.IN";
+        String toQueue = "brokerComponentA:queue:CALLBACK.2";
+        String mockedQ = "mock:" + toQueue;
+        MockEndpoint mockEndpoint = getMockEndpoint(camelContext, mockedQ, true);
+
+        AdviceWith.adviceWith(camelContext, routeId, routeBuilder -> {
+            routeBuilder.weaveByToUri(toQueue).replace().to(mockedQ);
+        });
+        mockEndpoint.expectedMessageCount(1);
+        Exchange exchange = getExchange(sendFrom, "kjh", headers);
+        producerTemplate.send(sendFrom, exchange);
+        System.out.println("before");
+        mockEndpoint.await(10, TimeUnit.SECONDS);
+        System.out.println("after________");
+        mockEndpoint.assertIsSatisfied();
+        //MockEndpoint.assertIsSatisfied(camelContext);
+    }
+
+    public Exchange getExchange(String sendFrom, String xml_in, Map<String, Object> headers) {
+        Exchange exchange = producerTemplate.getCamelContext().getEndpoint(sendFrom).createExchange();
+        exchange.getIn().setHeaders(headers);
+        exchange.getIn().setBody(xml_in);
+        return exchange;
+
     }
 }

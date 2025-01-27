@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<list>
+    <string name="PRODUCT_CARD">JUNI</string>
+    <string name="BANK_NAME">PB</string>
+    <xml name="OLD_CARD_DATA">
+        <ContractData prod="JUNI">
+            <Details>Some contract details here</Details>
+        </ContractData>
+    </xml>
+</list>

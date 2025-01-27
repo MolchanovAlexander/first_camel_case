@@ -13,7 +13,7 @@
             <from uri="brokerComponentA:queue:TEST.TEST.IN"/>
             <log message="isDigit result: ${bean:analizeBean.isDigit(${body})}"/>
             <log message="body____: ${date:now}" loggingLevel="INFO"/>
-
+            <to uri="brokerComponentA:queue:CALLBACK.1"/>
             <choice>
                 <when>
                     <method ref="analizeBean" method="isDigit"/>
@@ -42,6 +42,7 @@
         <route id="callback1">
             <from uri="brokerComponentA:queue:CALLBACK.1?maxConcurrentConsumers=10"/>
             <log message="callback_1: ${body}"/>
+            <to uri="brokerComponentA:queue:CALLBACK.2"/>
         </route>
         <route id="callback2">
             <from uri="brokerComponentA:queue:CALLBACK.2?maxConcurrentConsumers=10"/>
