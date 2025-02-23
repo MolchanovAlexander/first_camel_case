@@ -15,7 +15,6 @@ public class FileHelperTest {
     @Test
     public void parseTiffToJpeg() throws IOException {
         byte[] tiffBytes = Files.readAllBytes(Paths.get("/home/salat/IdeaProjects/first_camel_case/multipage_tiff_example.tif"));
-
         // Convert to JPEG
         FileHelper.parseTiffToJpeg(tiffBytes, "/home/salat/IdeaProjects/first_camel_case");
 
