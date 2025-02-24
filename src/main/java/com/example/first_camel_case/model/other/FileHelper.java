@@ -12,14 +12,19 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 public class FileHelper {
 
     public static void parseTiffToJpeg(byte[] fileBytes, String outputDirectory) {
         try (InputStream fileInputStream = new ByteArrayInputStream(fileBytes);
-             ImageInputStream imageInputStream = ImageIO.createImageInputStream(fileInputStream)){
+             ImageInputStream imageInputStream = ImageIO.createImageInputStream(fileInputStream)) {
             ImageReader tiffReader = ImageIO.getImageReadersByFormatName("TIFF").next();
             tiffReader.setInput(imageInputStream);
             int numPages = tiffReader.getNumImages(true);
@@ -85,7 +90,7 @@ public class FileHelper {
     }
 
     private static byte[] imgToBytes(ImageIcon img, String imgFormatTypeConversion) {
-        try{
+        try {
             if (null == img) {
                 return new byte[0];
             } else {
@@ -97,6 +102,58 @@ public class FileHelper {
             }
         } catch (Exception e) {
             throw new RuntimeException("img to byte fail", e);
+        }
+    }
+
+    public static void zipFiles(String[] imagePaths, String outputZipPath) {
+        try (FileOutputStream fos = new FileOutputStream(outputZipPath);
+             ZipOutputStream zos = new ZipOutputStream(fos)) {
+
+            for (String imagePath : imagePaths) {
+                File file = new File(imagePath);
+                if (!file.exists()) {
+                    System.out.println("File not found: " + imagePath);
+                    continue;
+                }
+                try (FileInputStream fis = new FileInputStream(file)) {
+                    ZipEntry zipEntry = new ZipEntry(file.getName());
+                    zos.putNextEntry(zipEntry);
+                    byte[] buffer = new byte[1024];
+                    int length;
+                    while ((length = fis.read(buffer)) > 0) {
+                        zos.write(buffer, 0, length);
+                    }
+                    zos.closeEntry();
+                }
+            }
+            System.out.println("ZIP archive created: " + outputZipPath);
+        } catch (IOException e) {
+            throw new RuntimeException("Error creating ZIP file", e);
+        }
+    }
+
+    public static void unzipFiles(String zipFilePath, String outputDirectory) {
+        File dir = new File(outputDirectory);
+        if (!dir.exists()) {
+            dir.mkdirs(); // Create output directory if it doesn't exist
+        }
+
+        try (ZipInputStream zis = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry zipEntry;
+            while ((zipEntry = zis.getNextEntry()) != null) {
+                File newFile = new File(outputDirectory, zipEntry.getName());
+                try (FileOutputStream fos = new FileOutputStream(newFile)) {
+                    byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = zis.read(buffer)) > 0) {
+                        fos.write(buffer, 0, len);
+                    }
+                }
+                zis.closeEntry();
+            }
+            System.out.println("Unzipped successfully to: " + outputDirectory);
+        } catch (IOException e) {
+            throw new RuntimeException("Error unzipping file", e);
         }
     }
 }
