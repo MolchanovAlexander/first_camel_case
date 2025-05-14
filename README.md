@@ -1,0 +1,25 @@
+there was a problem to activate prometheus
+curl http://localhost:8080/actuator
+
+```
+{
+  "_links": {
+    "self": {
+      "href": "http://localhost:8080/actuator",
+      "templated": false
+    },
+    "health": {
+      "href": "http://localhost:8080/actuator/health",
+      "templated": false
+    },
+    "health-path": {
+      "href": "http://localhost:8080/actuator/health/{*path}",
+      "templated": true
+    },
+    "info": {
+      "href": "http://localhost:8080/actuator/info",
+      "templated": false
+    }
+  }
+}
+```

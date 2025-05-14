@@ -1,0 +1,57 @@
+version: "3.2"
+
+networks:
+  metrics:
+    name: metrics
+
+services:
+  activemq1:
+    image: rmohr/activemq
+    container_name: activemq1
+    ports:
+      - "61616:61616"
+      - "8161:8161"
+    networks:
+      - metrics
+
+  activemq2:
+    image: rmohr/activemq
+    container_name: activemq2
+    ports:
+      - "61617:61616" # this works as 61616 in grafana compose
+      - "8162:8161"
+    networks:
+      - metrics
+
+  saggu-camel:
+    depends_on:
+      - activemq2
+    container_name: saggu-camel
+    image: saggu/camel
+    ports:
+      - 8080:8080
+    networks:
+      - metrics
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus
+    ports:
+      - 9090:9090
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - metrics
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    ports:
+    - 3000:3000
+    networks:
+      - metrics

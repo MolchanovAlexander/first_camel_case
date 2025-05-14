@@ -2,12 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-<!--    <parent>-->
-<!--        <groupId>org.springframework.boot</groupId>-->
-<!--        <artifactId>spring-boot-starter-parent</artifactId>-->
-<!--        <version>3.4.0</version>-->
-<!--        <relativePath/>-->
-<!--    </parent>-->
+    <!--    <parent>-->
+    <!--        <groupId>org.springframework.boot</groupId>-->
+    <!--        <artifactId>spring-boot-starter-parent</artifactId>-->
+    <!--        <version>3.4.0</version>-->
+    <!--        <relativePath/>-->
+    <!--    </parent>-->
 
     <groupId>com.example</groupId>
     <artifactId>first_camel_case</artifactId>
@@ -71,11 +71,22 @@
             <artifactId>pooled-jms</artifactId>
             <version>3.1.0</version>
         </dependency>
-
+        <!-- grafana / micrometer / prometeus -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.camel.springboot</groupId>
+            <artifactId>camel-micrometer-starter</artifactId>
+            <version>${camel.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.micrometer</groupId>
+            <artifactId>micrometer-registry-prometheus</artifactId>
+            <!--            <scope>runtime</scope>-->
+        </dependency>
+        <!-- end of grafana  -->
         <dependency>
             <groupId>org.apache.camel.springboot</groupId>
             <artifactId>camel-spring-boot-starter</artifactId>
@@ -190,13 +201,13 @@
 
     <build>
         <plugins>
-             <plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.5.2</version>
-                 <configuration>
-                     <skipTests>${scipTests}</skipTests>
-                 </configuration>
+                <configuration>
+                    <skipTests>${scipTests}</skipTests>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -246,6 +257,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.3.5</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
                 <configuration>
                     <excludes>
                         <exclude>
@@ -255,14 +273,14 @@
                     </excludes>
                 </configuration>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-resources-plugin</artifactId>-->
-<!--                <version>3.3.1</version>-->
-<!--                <configuration>-->
-<!--                    <useDefaultDelimiters>true</useDefaultDelimiters>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
+            <!--            <plugin>-->
+            <!--                <groupId>org.apache.maven.plugins</groupId>-->
+            <!--                <artifactId>maven-resources-plugin</artifactId>-->
+            <!--                <version>3.3.1</version>-->
+            <!--                <configuration>-->
+            <!--                    <useDefaultDelimiters>true</useDefaultDelimiters>-->
+            <!--                </configuration>-->
+            <!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

@@ -104,11 +104,12 @@
     </bean>
 
     <bean id="brokerA" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61616"/>
+        <property name="brokerURL" value="tcp://activemq1:61616"/>
     </bean>
 
     <bean id="brokerB" class="org.apache.activemq.ActiveMQConnectionFactory">
-        <property name="brokerURL" value="tcp://localhost:61617"/>
+    <!--        activemq1 -->
+        <property name="brokerURL" value="tcp://activemq2:61616"/>
     </bean>
 
 </beans>

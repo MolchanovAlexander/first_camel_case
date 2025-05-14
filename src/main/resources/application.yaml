@@ -2,7 +2,26 @@ camel:
   springboot:
     main-run-controller: true
     #routes-include-pattern: classpath:camel/*.xml
+server:
+  port: 8080
 
+#metrics: 0 */1 * * * *
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - info
+          - health
+          - prometheus
+  endpoint:
+    metrics:
+      enabled: true
+    prometheus:
+      enabled: true
+    health:
+      show-details: always
 
 spring:
   main:
@@ -10,8 +29,13 @@ spring:
   activemq:
     user: admin
     password: admin
-
+  jmx:
+    enabled: true
+  autoconfigure:
+    exclude: org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration
 app:
   queue:
     consume: "jms:queue:CONSUMER_QUEUE"
     produce: "jms:queue:RECEIVER_QUEUE"
+
+
